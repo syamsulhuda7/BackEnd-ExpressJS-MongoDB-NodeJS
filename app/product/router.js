@@ -6,6 +6,7 @@ const productController = require("./controller");
 const { police_check } = require("../../middlewares");
 
 router.get("/products", productController.index);
+router.get("/products/:id", productController.view);
 router.post(
   "/products",
   multer({ dest: os.tmpdir() }).single("image"),

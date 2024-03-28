@@ -1,3 +1,4 @@
+const { ObjectId } = require("bson");
 const path = require("path");
 const fs = require("fs");
 const config = require("../config");
@@ -22,14 +23,14 @@ const store = async (req, res, next) => {
     }
 
     // update karena relasi dengan tag
-    if (payload.tags && payload.tags.length > 0) {
-      let tags = await Tag.find({
-        name: { $in: payload.tags },
-      });
-      if (tags.length) {
-        payload = { ...payload, tags: tags.map((tag) => tag._id) };
+    if(payload.tags && payload.tags.length > 0){
+      let tags = 
+      await Tag
+      .find({name: {$in: payload.tags}});
+      if(tags.length){ 
+         payload = {...payload, tags: tags.map(tag => tag._id)};
       } else {
-        delete payload.tags;
+         delete payload.tags;
       }
     }
 
@@ -108,14 +109,14 @@ const update = async (req, res, next) => {
     }
 
     // update karena relasi dengan tag
-    if (payload.tags && payload.tags.length > 0) {
-      let tags = await Tag.find({
-        name: { $in: payload.tags },
-      });
-      if (tags.length) {
-        payload = { ...payload, tags: tags.map((tag) => tag._id) };
+    if(payload.tags && payload.tags.length > 0){
+      let tags = 
+      await Tag
+      .find({name: {$in: payload.tags}});
+      if(tags.length){ 
+         payload = {...payload, tags: tags.map(tag => tag._id)};
       } else {
-        delete payload.tags;
+         delete payload.tags;
       }
     }
 
@@ -186,6 +187,18 @@ const update = async (req, res, next) => {
   }
 };
 
+const view = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    let products = await Product.findOne({ _id: new ObjectId(id) })
+    return res.json({
+      data: products
+    })
+  } catch (err) {
+    next(err);
+  }
+};
+
 const index = async (req, res, next) => {
   try {
     let { skip = 0, limit = 10, q = "", category = "", tags = [] } = req.query;
@@ -230,7 +243,9 @@ const index = async (req, res, next) => {
       .populate("tags");
 
     return res.json({
-      data: products,
+      data: products, 
+      skip,
+      limit,
       count
     });
   } catch (err) {
@@ -255,4 +270,4 @@ const destroy = async (req, res, next) => {
   }
 };
 
-module.exports = { store, index, update, destroy };
+module.exports = { store, index, view, update, destroy };
