@@ -131,27 +131,31 @@ const update = async (req, res, next) => {
         config.rootPath,
         `public/images/products/${filename}`
       );
-
+    
       // memindahkan
       const src = fs.createReadStream(tmp_path);
       const dest = fs.createWriteStream(target_path);
+    
       src.pipe(dest);
-
+    
       src.on("end", async () => {
         try {
           let product = await Product.findById(id);
           let currentImage = `${config.rootPath}/public/images/products/${product.image_url}`;
-
+    
           if (fs.existsSync(currentImage)) {
             fs.unlinkSync(currentImage);
           }
-          product = await Product.findByIdAndUpdate(id, payload, {
+    
+          product = await Product.findByIdAndUpdate(id, {...payload, image_url: filename}, {
             new: true,
             runValidators: true,
           });
+    
           return res.json(product);
         } catch (err) {
           fs.unlinkSync(target_path);
+    
           if (err && err.name === "ValidationError") {
             return res.json({
               error: 1,
@@ -159,11 +163,11 @@ const update = async (req, res, next) => {
               fields: err.errors,
             });
           }
-
+    
           next(err);
         }
       });
-
+    
       src.on("error", async () => {
         next(err);
       });
@@ -172,8 +176,10 @@ const update = async (req, res, next) => {
         new: true,
         runValidators: true,
       });
+    
       return res.json(product);
     }
+    
   } catch (err) {
     if (err && err.name === "ValidationError") {
       return res.json({

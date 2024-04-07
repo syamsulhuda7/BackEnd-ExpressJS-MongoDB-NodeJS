@@ -48,34 +48,57 @@ const localStrategy = async (email, password, done) => {
 
 const login = async (req, res, next) => {
     passport.authenticate('local', async function(err, user) {
-        if (err) return next (err);
+        if (err) return next(err);
 
         if (!user) return res.json({error: 1, message: 'Email or Password incorrect'});
 
-        let signed = jwt.sign(user, config.secretkey);
+        let signed = jwt.sign(user, config.secretkey, {expiresIn: '1d'});
 
         await User.findByIdAndUpdate(user._id, {$push: {token: signed}});
         
+        res.cookie('signed', signed,{
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24
+        });
+
+        // Kirim respons JSON setelah mengatur cookie
         res.json({
             message: 'login successfully',
             user, 
             token: signed
-        })
-    }) (req, res, next)
-}
+        });
+    })(req, res, next); // Perhatikan bahwa kita memanggil passport.authenticate dengan req, res, dan next di dalam tanda kurung
+};
 
 const logout = async (req, res, next) => {
+    // Dapatkan token dari permintaan
     let token = getToken(req);
+    // console.log(token)
+    
+    // Jika token tidak ditemukan, kirim respons dengan pesan kesalahan
+    if (!token) {
+        return res.json({
+            error: 1,
+            message: 'No Token Found!'
+        });
+    }
 
-    let user = await User.findOneAndUpdate({token: {$in: [token]}}, {$pull: {token: token}}, {useFindAndModify: false});
+    // Temukan dan hapus token dari pengguna yang sesuai
+    let user = await User.findOneAndUpdate(
+        { token: token },
+        { $pull: { token: token } },
+        { useFindAndModify: false }
+    );
 
-    if(!token || !user) {
-        res.json({
+    // Jika tidak ada pengguna yang ditemukan dengan token yang diberikan, kirim respons dengan pesan kesalahan
+    if (!user) {
+        return res.json({
             error: 1,
             message: 'No User Found!'
         });
     }
 
+    // Jika berhasil logout, kirim respons berhasil
     return res.json({
         error: 0,
         message: 'Logout berhasil'

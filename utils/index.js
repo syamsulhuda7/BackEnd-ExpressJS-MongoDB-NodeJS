@@ -1,6 +1,8 @@
 const { AbilityBuilder, Ability } = require("@casl/ability");
 
 function getToken(req) {
+    // console.log(req.headers.authorization);
+
   let token = req.headers.authorization
     ? req.headers.authorization.replace("Bearer ", "")
     : null;
@@ -19,6 +21,7 @@ const policies = {
         can('update', 'User', {_id: user._id});
         can('read', 'Cart', {user_id: user._id});
         can('update', 'Cart', {user_id: user._id});
+        can('delete', 'Cart', {user_id: user._id});
         can('view', 'DeliveryAddress');
         can('create', 'DeliveryAddress', {user_id: user._id});
         can('update', 'DeliveryAddress', {user_id: user._id});

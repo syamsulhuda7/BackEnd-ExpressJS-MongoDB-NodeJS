@@ -11,6 +11,11 @@ const orderSchema = Schema({
         default: 'waiting_payment'
     },
 
+    payment_method: {
+        type: String,
+        default:''
+    },
+
     delivery_fee: {
         type: Number,
         default: 0
@@ -21,7 +26,8 @@ const orderSchema = Schema({
         kabupaten: { type: String, required: [true, 'Kabupaten harus diisi']},
         kecamatan: { type: String, required: [true, 'Kecamatan harus diisi']},
         kelurahan: { type: String, required: [true, 'Kelurahan harus diisi']},
-        detail: {type: String}
+        detail: {type: String},
+        name: {type: String}
     },
 
     user: {

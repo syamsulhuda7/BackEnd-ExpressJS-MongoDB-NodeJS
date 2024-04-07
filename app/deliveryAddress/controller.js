@@ -82,7 +82,7 @@ const destroy = async (req, res, next) => {
 const index = async (req, res, next) => {
     try {
         let{skip = 0, limit = 10} = req.query;
-        let count = await DeliveryAddress.find({user: req.user._id}).dountDocuments();
+        let count = await DeliveryAddress.find({user: req.user._id}).countDocuments();
         let address = 
         await DeliveryAddress
         .find({user: req.user._id})

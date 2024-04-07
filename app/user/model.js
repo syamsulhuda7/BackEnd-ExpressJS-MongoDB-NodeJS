@@ -24,7 +24,8 @@ let userSchema = Schema(
 
     password: {
       type: String,
-      required: [true, "Email harus diisi"],
+      required: [true, "Password harus diisi"],
+      minlength: [3, "Panjang password minimal 3 karakter"],
       maxlength: [255, "Panjang password maksimal 255 karakter"],
     },
 

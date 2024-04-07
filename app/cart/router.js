@@ -8,6 +8,12 @@ router.put(
     cartController.update
 );
 
+router.delete(
+    '/carts',
+    police_check('delete', 'Cart'),
+    cartController.destroy
+);
+
 router.get(
     '/carts',
     police_check('read', 'Cart'),

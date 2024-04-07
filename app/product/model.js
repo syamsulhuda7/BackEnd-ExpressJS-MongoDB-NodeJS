@@ -12,16 +12,19 @@ const productSchema = Schema(
     description: {
       type: String,
       maxlength: [1000, "Panjang deskripsi maksimal 1000 karakter"],
+      required: [true, "Deskripsi harus diisi"],
     },
 
     price: {
       type: Number,
       default: 0,
+      required: [true, "Harga harus diisi"],
     },
 
     stock: {
       type: Number,
       default: 0,
+      required: [true, "Stok harus diisi"],
     },
 
     image_url: String,
@@ -29,12 +32,14 @@ const productSchema = Schema(
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
+      required: [true, "Kategori harus diisi"],
     },
 
     tags: [
       {
         type: Schema.Types.ObjectId,
         ref: "Tag",
+        required: [true, "Tag harus diisi"],
       },
     ],
   },
