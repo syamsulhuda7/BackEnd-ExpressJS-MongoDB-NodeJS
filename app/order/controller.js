@@ -62,7 +62,7 @@ const store = async (req, res, next) => {
 const index = async (req, res, next) => {
     try {
         // Destructuring objek req.query untuk mendapatkan nilai skip dan limit, default 0 dan 10
-        let { skip = 0, limit = 10 } = req.query;
+        let { skip = 0} = req.query;
 
         // Menghitung jumlah dokumen berdasarkan user ID
         let count = await Order.countDocuments({ user: req.user._id });
@@ -70,7 +70,7 @@ const index = async (req, res, next) => {
         // Mengambil daftar pesanan berdasarkan user ID dengan populate order_items dan mengurutkannya berdasarkan createdAt secara descending
         let orders = await Order.find({ user: req.user._id })
             .skip(parseInt(skip))
-            .limit(parseInt(limit))
+            // .limit(parseInt(limit))
             .populate('order_items')
             .sort({ createdAt: -1 });
 
